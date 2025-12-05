@@ -255,7 +255,7 @@ build_variant() {
 
   # Calculate checksum
   local checksum=$(shasum -a 256 "$zip_file" | cut -d' ' -f1)
-  local size=$(stat -c%s "$zip_file" 2>/dev/null || stat -f%z "$zip_file" 2>/dev/null || wc -c < "$zip_file")
+  local size=$(wc -c < "$zip_file" | tr -d ' ')
 
   echo "    ✓ ${variant_name}.zip (${size} bytes, sha256:${checksum:0:16}...)"
 }

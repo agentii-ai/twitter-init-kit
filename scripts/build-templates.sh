@@ -95,7 +95,7 @@ MANIFEST_EOF
     [[ -f "$zip_file" ]] || continue
 
     local filename=$(basename "$zip_file")
-    local size=$(stat -f%z "$zip_file" 2>/dev/null || stat -c%s "$zip_file" 2>/dev/null || echo 0)
+    local size=$(wc -c < "$zip_file" | tr -d ' ')
     local sha256=$(shasum -a 256 "$zip_file" | cut -d' ' -f1)
 
     # Extract agent and script from filename
