@@ -9,10 +9,31 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 
-from ..template_engine import TemplateEngine
 from ..git_utils import GitUtils
 
 console = Console()
+
+# Agent configuration: agent_key -> (directory, file_extension)
+AGENT_CONFIG = {
+    "claude": (".claude/commands", ".md"),
+    "cursor": (".cursor/commands", ".md"),
+    "cursor-agent": (".cursor/commands", ".md"),
+    "windsurf": (".windsurf/workflows", ".md"),
+    "gemini": (".gemini/commands", ".toml"),
+    "copilot": (".github/agents", ".agent.md"),
+    "qwen": (".qwen/commands", ".toml"),
+    "opencode": (".opencode/command", ".md"),
+    "codex": (".codex/prompts", ".md"),
+    "kilocode": (".kilocode/workflows", ".md"),
+    "auggie": (".augment/commands", ".md"),
+    "codebuddy": (".codebuddy/commands", ".md"),
+    "amp": (".agents/commands", ".md"),
+    "shai": (".shai/commands", ".md"),
+    "q": (".amazonq/prompts", ".md"),
+    "bob": (".bob/commands", ".md"),
+    "roo": (".roo/commands", ".md"),
+    "qoder": (".qoder/commands", ".md"),
+}
 
 
 def init_command(
@@ -124,25 +145,46 @@ def init_command(
             console.print(f"[dim]Searched: {package_dir.parent.parent / '.twitterkit'}[/dim]")
         console.print("[yellow]⚠[/yellow] .twitterkit/ source not found")
 
-    # Copy slash commands to .claude/commands/ if AI agent specified
-    if ai and ai.lower() in ["claude", "claude-code"]:
-        claude_commands_dir = target_dir / ".claude" / "commands"
-        claude_commands_dir.mkdir(parents=True, exist_ok=True)
+    # Copy slash commands to agent-specific directory if AI agent specified
+    if ai:
+        agent_key = ai.lower()
+        if agent_key in AGENT_CONFIG:
+            agent_dir, file_ext = AGENT_CONFIG[agent_key]
+            commands_dir = target_dir / agent_dir
+            commands_dir.mkdir(parents=True, exist_ok=True)
 
-        commands_source = target_twitterkit / "templates" / "commands"
-        if commands_source.exists():
-            for cmd_file in commands_source.glob("twitterkit.*.md"):
-                dest_file = claude_commands_dir / cmd_file.name
-                if dest_file.exists() and not force:
-                    console.print(f"[yellow]⚠[/yellow] Skipping {cmd_file.name} (already exists)")
-                else:
-                    shutil.copy2(cmd_file, dest_file)
-                    if debug:
-                        console.print(f"[dim]Installed: {cmd_file.name}[/dim]")
+            commands_source = target_twitterkit / "templates" / "commands"
+            if commands_source.exists():
+                installed_count = 0
+                for cmd_file in commands_source.glob("twitterkit.*.md"):
+                    # Convert filename if needed (e.g., .md -> .toml for gemini/qwen)
+                    if file_ext == ".md":
+                        dest_name = cmd_file.name
+                    elif file_ext == ".toml":
+                        # Convert to TOML format for gemini/qwen
+                        dest_name = cmd_file.stem + ".toml"
+                    elif file_ext == ".agent.md":
+                        # Convert to .agent.md for copilot
+                        dest_name = cmd_file.stem + ".agent.md"
+                    else:
+                        dest_name = cmd_file.name
+                    
+                    dest_file = commands_dir / dest_name
+                    if dest_file.exists() and not force:
+                        if debug:
+                            console.print(f"[yellow]⚠[/yellow] Skipping {dest_name} (already exists)")
+                    else:
+                        shutil.copy2(cmd_file, dest_file)
+                        installed_count += 1
+                        if debug:
+                            console.print(f"[dim]Installed: {dest_name}[/dim]")
 
-            console.print(f"[green]✓[/green] Installed slash commands for Claude Code")
+                console.print(f"[green]✓[/green] Installed {installed_count} slash commands for {ai}")
+            else:
+                console.print(f"[yellow]⚠[/yellow] Command templates not found")
         else:
-            console.print(f"[yellow]⚠[/yellow] Command templates not found")
+            console.print(f"[yellow]⚠[/yellow] Unknown AI agent: {ai}. Commands not installed.")
+            console.print(f"[dim]Supported agents: {', '.join(AGENT_CONFIG.keys())}[/dim]")
 
     # Create initial directory structure
     specs_dir = target_dir / "specs"
@@ -174,7 +216,7 @@ Twitter marketing campaign powered by twitter-init-kit
 
 ## Resources
 
-- [Twitter-Init-Kit Documentation](https://github.com/yourusername/twitter-init-kit)
+- [Twitter-Init-Kit Documentation](https://github.com/agentii-ai/twitter-init-kit)
 - [Spec-Kit Original](https://github.com/github/spec-kit)
 """
         readme_path.write_text(readme_content)
