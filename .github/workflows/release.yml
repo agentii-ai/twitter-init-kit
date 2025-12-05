@@ -8,6 +8,8 @@ on:
       - '.twitterkit/**'
       - '.github/workflows/release.yml'
       - '.github/workflows/scripts/**'
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       version:
