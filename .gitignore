@@ -58,6 +58,9 @@ logs/
 dist/
 build/
 
+# Template build artifacts
+.genreleases/
+release_notes.md
 
 # Temporary files
 *.tmp
