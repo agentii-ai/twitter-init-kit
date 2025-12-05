@@ -49,8 +49,8 @@ This twitter-init-kit project is a **meta-toolkit** - we're building a toolkit f
 
 ### C. Development Tooling (Owner: Lead Dev)
 
-- [ ] T013 Set up Python development environment (Python 3.11+)
-- [ ] T014 Install dependencies: typer, rich, httpx, platformdirs, readchar, truststore
+- [x] T013 Set up Python development environment (Python 3.11+)
+- [x] T014 Install dependencies: typer, rich, httpx, platformdirs, readchar, truststore
 - [x] T015 Create `tests/` directory structure for integration tests
 - [x] T016 Create `tests/fixtures/` directory for test data
 
