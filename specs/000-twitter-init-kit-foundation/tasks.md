@@ -231,18 +231,18 @@ This twitter-init-kit project is a **meta-toolkit** - we're building a toolkit f
 
 ### A. Integration Tests (Owner: Lead Dev)
 
-- [ ] T111 Create `tests/test_init.py` to test `twitter_cli init` command
-- [ ] T112 Test initialization in new directory: `twitter_cli init test-project`
-- [ ] T113 Test initialization in current directory: `twitter_cli init . --force`
-- [ ] T114 Test agent selection: `twitter_cli init test-project --ai claude`
-- [ ] T115 Test script selection: `twitter_cli init test-project --script ps`
-- [ ] T116 Create `tests/test_templates.py` to test template rendering
-- [ ] T117 Test template variable substitution ($PROJECT_NAME, $FEATURE_NAME)
-- [ ] T118 Test missing variable error handling
-- [ ] T119 Create `tests/test_agent_commands.py` to test slash commands
-- [ ] T120 Test `/twitterkit.constitution` command execution
-- [ ] T121 Test `/twitterkit.specify` command execution
-- [ ] T122 Test `/twitterkit.plan` command execution
+- [x] T111 Create `tests/test_init.py` to test `twitter_cli init` command
+- [x] T112 Test initialization in new directory: `twitter_cli init test-project`
+- [x] T113 Test initialization in current directory: `twitter_cli init . --force`
+- [x] T114 Test agent selection: `twitter_cli init test-project --ai claude`
+- [x] T115 Test script selection: `twitter_cli init test-project --script ps`
+- [x] T116 Create `tests/test_templates.py` to test template rendering
+- [x] T117 Test template variable substitution ($PROJECT_NAME, $FEATURE_NAME)
+- [x] T118 Test missing variable error handling
+- [x] T119 Create `tests/test_agent_commands.py` to test slash commands
+- [x] T120 Test `/twitterkit.constitution` command execution
+- [x] T121 Test `/twitterkit.specify` command execution
+- [x] T122 Test `/twitterkit.plan` command execution
 
 ### B. Multi-Kit Coexistence Tests (Owner: Lead Dev)
 
@@ -312,12 +312,12 @@ This twitter-init-kit project is a **meta-toolkit** - we're building a toolkit f
 
 ### B. Documentation Completeness (Owner: Content Lead)
 
-- [ ] T159 Review all documentation for accuracy
+- [x] T159 Review all documentation for accuracy
 - [ ] T160 Add screenshots/GIFs to quickstart guide
 - [ ] T161 Create video walkthrough (5-10 min) showing full workflow
-- [ ] T162 Add FAQ section to README
-- [ ] T163 Add contributing guidelines for community contributions
-- [ ] T164 Add code of conduct
+- [x] T162 Add FAQ section to README
+- [x] T163 Add contributing guidelines for community contributions
+- [x] T164 Add code of conduct
 
 ### C. Release Assets (Owner: Founder)
 

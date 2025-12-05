@@ -55,7 +55,7 @@ further defined and clarified by project maintainers.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at <opensource@github.com>. All
+reported by contacting the project team at frank@agentii.ai. All
 complaints will be reviewed and investigated and will result in a response that
 is deemed necessary and appropriate to the circumstances. The project team is
 obligated to maintain confidentiality with regard to the reporter of an incident.
@@ -64,6 +64,15 @@ Further details of specific enforcement policies may be posted separately.
 Project maintainers who do not follow or enforce the Code of Conduct in good
 faith may face temporary or permanent repercussions as determined by other
 members of the project's leadership.
+
+## Twitter-Init-Kit Specific Guidelines
+
+In addition to the Contributor Covenant, twitter-init-kit community members should:
+
+- **Respect domain boundaries**: This kit is for Twitter marketing. Respectfully suggest other kits (spec-kit, pm-kit) for out-of-scope topics.
+- **Evidence-based contributions**: Ground discussions in case studies and research, not speculation.
+- **Collaborative kit creation**: Help others create kit variants (pm-kit, pd-kit) by sharing your learnings.
+- **Multi-kit coexistence**: Test changes for compatibility with spec-kit and other kit variants.
 
 ## Attribution
 
