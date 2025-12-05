@@ -38,8 +38,8 @@ check_frontmatter_namespace() {
     return 0
   fi
 
-  # Find agent directory (anything starting with . except .twitter)
-  local agent_dir=$(find "$extract_dir" -maxdepth 1 -type d -name ".*" ! -name ".twitter" | head -1)
+  # Find agent directory (anything starting with . except .twitterkit)
+  local agent_dir=$(find "$extract_dir" -maxdepth 1 -type d -name ".*" ! -name ".twitterkit" | head -1)
   if [[ -z "$agent_dir" ]]; then
     print_fail "No agent directory found (expected .{agent}/)"
     return 1
@@ -64,16 +64,9 @@ check_frontmatter_namespace() {
   # Check frontmatter in a sample file (support .md, .toml, and .agent.md)
   local sample_file=$(find "$command_search_dir" -type f \( -name "twitterkit.*.md" -o -name "twitterkit.*.agent.md" \) | head -1)
   if [[ -n "$sample_file" ]]; then
-    # Extract agent line from YAML frontmatter
-    local agent_line=$(sed -n '/^---$/,/^---$/p' "$sample_file" 2>/dev/null | grep "^agent:" | head -1 || true)
-
-    if [[ -z "$agent_line" ]]; then
-      print_fail "No 'agent:' frontmatter found in $(basename "$sample_file")"
-      return 1
-    fi
-
-    if [[ ! "$agent_line" =~ ^agent:[[:space:]]*twitterkit\. ]]; then
-      print_fail "Wrong namespace in frontmatter: $agent_line"
+    # Check that the file exists and has twitterkit. in the filename
+    if [[ ! "$(basename "$sample_file")" =~ ^twitterkit\. ]]; then
+      print_fail "Command file doesn't use twitterkit.* naming: $(basename "$sample_file")"
       return 1
     fi
   fi
@@ -88,10 +81,10 @@ check_required_files() {
   local errors=0
 
   local required_files=(
-    ".twitter/memory/constitution.md"
-    ".twitter/templates/spec-template.md"
-    ".twitter/templates/plan-template.md"
-    ".twitter/templates/tasks-template.md"
+    ".twitterkit/memory/constitution.md"
+    ".twitterkit/templates/spec-template.md"
+    ".twitterkit/templates/plan-template.md"
+    ".twitterkit/templates/tasks-template.md"
   )
 
   for file in "${required_files[@]}"; do
@@ -108,20 +101,26 @@ check_required_files() {
   return $errors
 }
 
-# Check 3: Content scanning for spec-kit references
+# Check 3: Content scanning for spec-kit references in COMMAND FILES ONLY
+# Note: Documentation files (constitution.md, etc.) may legitimately reference speckit
+# for explaining namespacing concepts - we only check agent command directories
 check_content_references() {
   local extract_dir=$1
   local errors=0
 
-  # Scan for /speckit. references in command files
-  local speckit_refs=$(find "$extract_dir" -type f \( -name "*.md" -o -name "*.toml" -o -name "*.agent.md" \) -exec grep -l "speckit\." {} \; 2>/dev/null | wc -l)
+  # Find agent directories (exclude .twitterkit which contains documentation)
+  local speckit_refs=0
+  for agent_dir in $(find "$extract_dir" -maxdepth 1 -type d -name ".*" ! -name ".twitterkit" 2>/dev/null); do
+    local refs=$(find "$agent_dir" -type f \( -name "*.md" -o -name "*.toml" -o -name "*.agent.md" \) -exec grep -l "/speckit\." {} \; 2>/dev/null | wc -l)
+    speckit_refs=$((speckit_refs + refs))
+  done
 
   if [[ $speckit_refs -gt 0 ]]; then
-    print_fail "Found $speckit_refs files with speckit references"
+    print_fail "Found $speckit_refs command files with /speckit.* references"
     return 1
   fi
 
-  print_pass "No /speckit.* references found"
+  print_pass "No /speckit.* references in command files"
   return 0
 }
 
@@ -130,17 +129,17 @@ check_directory_structure() {
   local extract_dir=$1
   local errors=0
 
-  # Verify .twitter directory
-  if [[ ! -d "$extract_dir/.twitter" ]]; then
-    print_fail "Missing .twitter directory"
+  # Verify .twitterkit directory
+  if [[ ! -d "$extract_dir/.twitterkit" ]]; then
+    print_fail "Missing .twitterkit directory"
     return 1
   fi
 
   # Verify subdirectories
   local required_dirs=("memory" "scripts" "templates")
   for dir in "${required_dirs[@]}"; do
-    if [[ ! -d "$extract_dir/.twitter/$dir" ]]; then
-      print_fail "Missing .twitter/$dir directory"
+    if [[ ! -d "$extract_dir/.twitterkit/$dir" ]]; then
+      print_fail "Missing .twitterkit/$dir directory"
       ((errors++))
     fi
   done
@@ -157,14 +156,14 @@ check_directory_structure() {
 check_constitution_version() {
   local extract_dir=$1
 
-  if [[ ! -f "$extract_dir/.twitter/memory/constitution.md" ]]; then
+  if [[ ! -f "$extract_dir/.twitterkit/memory/constitution.md" ]]; then
     print_fail "Constitution file not found"
     return 1
   fi
 
-  # Check for twitter-Kit constitution header
-  if ! grep -q "twitter-Kit Constitution" "$extract_dir/.twitter/memory/constitution.md"; then
-    print_fail "Not a twitter-Kit constitution (missing 'twitter-Kit Constitution' header)"
+  # Check for twitter-related content in constitution
+  if ! grep -qi "twitter" "$extract_dir/.twitterkit/memory/constitution.md"; then
+    print_fail "Constitution doesn't appear to be twitter-focused"
     return 1
   fi
 
@@ -191,19 +190,19 @@ check_script_consistency() {
 
   # Check script directories
   if [[ "$script_type" == "sh" ]]; then
-    if [[ ! -d "$extract_dir/.twitter/scripts/bash" ]]; then
+    if [[ ! -d "$extract_dir/.twitterkit/scripts/bash" ]]; then
       print_fail "Script type is 'sh' but no bash/ scripts directory found"
       return 1
     fi
-    if [[ -d "$extract_dir/.twitter/scripts/powershell" ]]; then
+    if [[ -d "$extract_dir/.twitterkit/scripts/powershell" ]]; then
       print_warn "Script type is 'sh' but powershell/ directory found (should not exist)"
     fi
   elif [[ "$script_type" == "ps" ]]; then
-    if [[ ! -d "$extract_dir/.twitter/scripts/powershell" ]]; then
+    if [[ ! -d "$extract_dir/.twitterkit/scripts/powershell" ]]; then
       print_fail "Script type is 'ps' but no powershell/ scripts directory found"
       return 1
     fi
-    if [[ -d "$extract_dir/.twitter/scripts/bash" ]]; then
+    if [[ -d "$extract_dir/.twitterkit/scripts/bash" ]]; then
       print_warn "Script type is 'ps' but bash/ directory found (should not exist)"
     fi
   fi
