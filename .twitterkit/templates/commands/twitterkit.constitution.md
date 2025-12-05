@@ -5,7 +5,7 @@ Generate or update the project's Twitter marketing constitution - the foundation
 ## Prerequisites
 
 - Project initialized with `twitterify init`
-- Optional: Read `.specify/memory/constitution.md` or `.twitterkit/memory/constitution.md` for reference
+- Optional: Read `.twitterkit/memory/constitution.md` for reference
 
 ## Execution Steps
 
